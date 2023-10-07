@@ -12,6 +12,11 @@
 -playAgain guesses arr not reset -fixed
 -beat previous attempts score incorrect 
 -playAgain 'no' keeps looping -fixed
+-playAgain 'no' loops alert 3 times, when pressing ENTER too fast on prompt
+> (Possible reason) Might be run time error of variable not updating and running same lines again after update AKA LAG? 
+> does not occur if 'no' clicked okay. 
+
+-
 */
 
 // let userArray, userName, isCorrect, min, max, number, newPlayer; 
@@ -164,7 +169,7 @@ function setupFreshGame(){
     gameInfo.numberToGuess = getNumberToGuess(min, max)
     // gameInfo.isSolved = false;
     gameInfo.responsesArr = []
-    gameInfo.attempts = 5
+    gameInfo.attempts = 10
 }
 
 function getNumberToGuess(min, max) {
@@ -173,7 +178,7 @@ function getNumberToGuess(min, max) {
 
 function resetPieces(){
     gameInfo.numberToGuess = getNumberToGuess(min, max)
-    gameInfo.attempts = 5
+    gameInfo.attempts = 10
     gameInfo.responsesArr = []
 }
 
