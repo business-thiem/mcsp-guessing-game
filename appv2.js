@@ -36,8 +36,23 @@ let numberOfCurrentPlays = 0;
 let oldPlayerScore = 0;
 let isSolved = false;
 
-// startGame(); now based on button click
+//format scores response to look nicer, later?
+function showScoreBoard(){
+    scoreBoardFormatted = ``
 
+    //when index is even, 
+    gameInfo.ScoreBoard.reduce((counter, value, index) => {
+        if(index % 2 === 0){
+            scoreBoardFormatted += `${value}` //left off here
+        } else {
+            scoreBoardFormatted += `${value}`
+        }
+    })
+    alert(scoreBoardFormatted)
+}
+
+
+// startGame(); now based on button click
 function startGame(){
     isSolved = false;
     
@@ -159,12 +174,15 @@ function validateUserResponse(gameObj){
     let guesses = gameInfo.responsesArr;
     let name = gameInfo.playerUserName;
     let scoreRangeDiff = oldPlayerScore;
+
+
     let scoreStr = `Good job, but you did not beat your oldScore: ${oldPlayerScore}`
 
     //beat highscore String
     if(guesses.length < oldPlayerScore){
         scoreRangeDiff = oldPlayerScore - guesses.length; 
         scoreStr = `You beat your previous attempt by ${scoreRangeDiff} fewer guesses`
+        recordNewScore(gameInfo.scoreBoard, name, guesses.lengtth)
     }
 
 
