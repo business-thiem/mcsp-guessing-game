@@ -8,8 +8,9 @@
 
 
 /* BUGs
+-condition to record score might still be wrong, if scores are even they still record
 -playAgain guesses arr not reset -fixed
--beat previous attempts score incorrect 
+-beat previous attempts score incorrect -fixed
 -playAgain 'no' keeps looping -fixed
 -playAgain 'no' loops alert 3 times, when pressing ENTER too fast on prompt
 > (Possible reason) Might be run time error of variable not updating and running same lines again after update AKA LAG? 
@@ -35,29 +36,35 @@ let min, max;
 let numberOfCurrentPlays = 0;
 let oldPlayerScore = 0;
 let isSolved = false;
+let isHighScore = false;
+let isVeteran = false;
 
 //format scores response to look nicer, later?
 function showScoreBoard(){
-    scoreBoardFormatted = ``
+    let scoreStr = `The Scores are
+    ---------------------------\n`;
+    const board = gameInfo.scoreBoard;
 
-    //when index is even, 
-    gameInfo.ScoreBoard.reduce((counter, value, index) => {
-        if(index % 2 === 0){
-            scoreBoardFormatted += `${value}` //left off here
+    //when index is even, empty is 
+    board.forEach((element, index, array) => {
+        if(index %2 === 0){
+            scoreStr += `${element}: ` //tim
         } else {
-            scoreBoardFormatted += `${value}`
+            scoreStr += `${element} \n` //3
         }
     })
-    alert(scoreBoardFormatted)
+
+    alert(scoreStr)
 }
 
 
 // startGame(); now based on button click
 function startGame(){
     isSolved = false;
+    isVeteran = false;
     
     gameInfo.playerUserName = prompt('What is your name?');
-    let isVeteran = priorPlayerCheck(gameInfo.scoreBoard, gameInfo.playerUserName)
+    isVeteran = priorPlayerCheck(gameInfo.scoreBoard, gameInfo.playerUserName)
 
     //veteran gameloop, loads their old score
     if(isVeteran){
@@ -98,11 +105,12 @@ function startGame(){
         }
     }
 
-    if(isSolved && gameInfo.attempts >= 0){ 
-        //still have lives, solved it
+    //still have lives, solved it
+    if(gameInfo.attempts > 0){
+        //currently unreachable
         alert('game has ended because you solved it')
     } else if(gameInfo.attempts === -1){
-        alert('Game addiction ended, have you tried alcohol?')
+        alert('Game addiction ended, have you tried therapy?')
     } else if(gameInfo.attempts === 0){
         //ran out of lives
         alert('you lost the game')
@@ -130,42 +138,6 @@ function playGame(){
 
 }
 
-function priorPlayerCheck(arr, name){
-    if(arr.includes(name)){
-        let score = loadPlayerStats(name) //load player score if exist. this is redundant for debugging
-        console.log(`${name} is in the list. Your past score was: ${score}`)
-        return true
-    } else{
-        console.log(`${name} is not in the list`)
-        return false
-    }
-}
-
-
-function loadPlayerStats(arr, name){
-    //check for player return score
-    let scoreIndex = arr.indexOf(name)
-    let priorScore = arr[scoreIndex+1];
-
-
-    // priorScore = 5;
-    return priorScore; 
-}
-
-// i am not checking for unique or highest score, because higher score will always call this function, and newScores adds to the beginning and includes searches for first match. Complexity not needed here yett.
-function recordNewScore(arr, name, newScore){
-    console.log('old scores array:', arr);
-
-    arr.unshift(newScore)
-    arr.unshift(name);
-
-
-    console.log('new scores array:', arr);
-    return arr;
-}
-
-
-
 
 function validateUserResponse(gameObj){
     let num = gameObj.numberToGuess;
@@ -179,10 +151,14 @@ function validateUserResponse(gameObj){
     let scoreStr = `Good job, but you did not beat your oldScore: ${oldPlayerScore}`
 
     //beat highscore String
-    if(guesses.length < oldPlayerScore){
+    if(guesses.length > oldPlayerScore){
         scoreRangeDiff = oldPlayerScore - guesses.length; 
-        scoreStr = `You beat your previous attempt by ${scoreRangeDiff} fewer guesses`
-        recordNewScore(gameInfo.scoreBoard, name, guesses.lengtth)
+        if(!isVeteran){
+            scoreStr = `Good job ${name}`
+        } else {
+            scoreStr = `You beat your previous attempt by ${scoreRangeDiff} fewer guesses`
+            isHighScore = true;
+        }
     }
 
 
@@ -194,6 +170,10 @@ function validateUserResponse(gameObj){
     if(num === playerGuess){
         alert(strVictory)
         isCorrect = true
+        if(isHighScore === true){
+            recordNewScore(gameInfo.scoreBoard, gameInfo.playerUserName, guesses.length)
+        }
+        
     } else if(num > playerGuess){
         alert(`Sorry ${name}, Guess higher. try again: hint ${num}`)
     } else if(num < playerGuess){
@@ -225,3 +205,37 @@ function resetPieces(){
     gameInfo.responsesArr = []
 }
 
+
+function priorPlayerCheck(arr, name){
+    if(arr.includes(name)){
+        let score = loadPlayerStats(arr, name) //load player score if exist. this is redundant for debugging
+        console.log(`${name} is in the list. Your past score was: ${score}`)
+        return true
+    } else{
+        console.log(`${name} is not in the list`)
+        return false
+    }
+}
+
+
+function loadPlayerStats(arr, name){
+    //check for player return score
+    let scoreIndex = arr.indexOf(name)
+    let priorScore = arr[scoreIndex+1];
+
+
+    // priorScore = 5;
+    return priorScore; 
+}
+
+// i am not checking for unique or highest score, because higher score will always call this function, and newScores adds to the beginning and includes searches for first match. Complexity not needed here yett.
+function recordNewScore(arr, name, newScore){
+    console.log('old scores array:', arr);
+
+    arr.unshift(newScore)
+    arr.unshift(name);
+
+
+    console.log('new scores array:', arr);
+    return arr;
+}
