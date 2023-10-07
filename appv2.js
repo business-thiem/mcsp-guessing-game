@@ -8,10 +8,10 @@
 */
 
 
-/* DEBUG
+/* BUGs
 -playAgain guesses arr not reset -fixed
 -beat previous attempts score incorrect 
--playAgain 'no' keeps looping
+-playAgain 'no' keeps looping -fixed
 */
 
 // let userArray, userName, isCorrect, min, max, number, newPlayer; 
@@ -30,14 +30,13 @@ let gameInfo = {
 let min, max;
 let numberOfCurrentPlays = 0;
 let oldPlayerScore = 0;
+let isSolved = false;
 
 // startGame(); now based on button click
 
 function startGame(){
-
-
-    let isSolved = false;
-
+    isSolved = false;
+    
     gameInfo.playerUserName = prompt('What is your name?');
     let isVeteran = priorPlayerCheck(gameInfo.playerUserName)
 
@@ -55,39 +54,39 @@ function startGame(){
     } else {
         resetPieces();
     }
-    
+
+    console.log('start gameInfo:', gameInfo);
+
 
     //game loop while true
     while(!isSolved && gameInfo.attempts > 0){
-          
-        if(gameInfo.attempts > 0){
-            isSolved = playGame();
-            gameInfo.attempts--;
+        
+        isSolved = playGame();
+        gameInfo.attempts--;
 
-            if(isSolved){
-                let againRes = prompt('Would you like to play again? (\'yes\' or \'no\' ')
-                if(againRes === 'y' || againRes === 'yes'){
-                    numberOfCurrentPlays++
-                    startGame()
-                } else{
-                    gameInfo.attempts = 0;
-                }
+        if(isSolved){
+            let againRes = prompt('Would you like to play again? (\'yes\' or \'no\' ')
+            if(againRes === 'y' || againRes === 'yes'){
+                numberOfCurrentPlays++
+                isSolved = false;
+                startGame() 
+            } else{
+                gameInfo.attempts = -1;
             }
-        }
-        else {
-            isSolved = true;
         }
     }
 
-    if(gameInfo.attempts <= 0){
-        //ran out of lives
-        alert('you lost the game')
-    } else if(isSolved && gameInfo.attempts >= 0){ 
+    if(isSolved && gameInfo.attempts >= 0){ 
         //still have lives, solved it
         alert('game has ended because you solved it')
-    } else if(!isSolved && gameInfo.attempts >= 0){
-        //still have lives, not solved, you did not want to play again
+    } else if(gameInfo.attempts === -1){
         alert('Game ended. Not playing again')
+    } else if(gameInfo.attempts === 0){
+        //ran out of lives
+        alert('you lost the game')
+    } else if(gameInfo.attempts === 0){
+        alert(`You broke the code. This condition should be impossible to reach, \n 
+        ALERT THE CODE MONKEY!!!!`)
     }
 
 
@@ -104,7 +103,8 @@ function playGame(){
     gameInfo.currentResponse = Number(prompt(promptMessage))
     gameInfo.responsesArr.push(gameInfo.currentResponse)
 
-    return isSolved = validateUserResponse(gameInfo)
+    isSolved = validateUserResponse(gameInfo)
+    return isSolved;
 
 }
 
@@ -115,7 +115,7 @@ function priorPlayerCheck(){
 
 function loadPlayerStats(name){
     //check for player return score
-    let priorScore = 5
+    let priorScore = 5;
     return priorScore; 
 }
 
@@ -128,19 +128,20 @@ function validateUserResponse(gameObj){
     let isCorrect = gameObj.isSolved;
     let guesses = gameInfo.responsesArr;
     let name = gameInfo.playerUserName;
-    let score = guesses.length - oldPlayerScore; 
+    let scoreRangeDiff = oldPlayerScore;
+    let scoreStr = `Good job, but you did not beat your oldScore: ${oldPlayerScore}`
 
-    
-    // if(guesses.length < oldPlayerScore){
-    //     score = guesses.length
-    // } else {
-    //     score = guesses.length - oldPlayerScore;
-    // }
+    //beat highscore String
+    if(guesses.length < oldPlayerScore){
+        scoreRangeDiff = oldPlayerScore - guesses.length; 
+        scoreStr = `You beat your previous attempt by ${scoreRangeDiff} fewer guesses`
+    }
+
 
     let strVictory = `Congrats you\'re correct! Your guess was: ${playerGuess}
     \n The number to guess was: ${num}
-    \n Here were all your guesses ${guesses.join(', ')}
-    \n You beat your previous attempt by ${score} few guesses`
+    \n Here were all your guesses: ${guesses.join(', ')} 
+    \n ${scoreStr}`
     
     if(num === playerGuess){
         alert(strVictory)
@@ -164,8 +165,6 @@ function setupFreshGame(){
     // gameInfo.isSolved = false;
     gameInfo.responsesArr = []
     gameInfo.attempts = 5
-
-    console.log('start gameInfo:', gameInfo);
 }
 
 function getNumberToGuess(min, max) {
