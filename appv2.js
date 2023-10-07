@@ -8,7 +8,8 @@
 
 
 /* BUGs
--condition to record score might still be wrong, if scores are even they still record
+-condition to record score might still be wrong, if scores are even they still record 
+-Find PROBLEM #2
 -playAgain guesses arr not reset -fixed
 -beat previous attempts score incorrect -fixed
 -playAgain 'no' keeps looping -fixed
@@ -146,19 +147,22 @@ function validateUserResponse(gameObj){
     let guesses = gameInfo.responsesArr;
     let name = gameInfo.playerUserName;
     let scoreRangeDiff = oldPlayerScore;
+    isHighScore = false; //set just to be sure, should remove redundancy later
 
 
     let scoreStr = `Good job, but you did not beat your oldScore: ${oldPlayerScore}`
 
-    //beat highscore String
-    if(guesses.length > oldPlayerScore){
+    //beat highscore String //THIS IS THE PROBLEM #2
+    if(guesses.length < oldPlayerScore){
         scoreRangeDiff = oldPlayerScore - guesses.length; 
-        if(!isVeteran){
-            scoreStr = `Good job ${name}`
-        } else {
-            scoreStr = `You beat your previous attempt by ${scoreRangeDiff} fewer guesses`
-            isHighScore = true;
-        }
+        scoreStr = `You beat your previous attempt by ${scoreRangeDiff} fewer guesses`
+        isHighScore = true;
+    }
+
+    //if not a veteran, then always a high score
+    if(!isVeteran){
+        scoreStr = `Good job ${name}`
+        isHighScore = true;
     }
 
 
