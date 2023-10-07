@@ -2,8 +2,7 @@
 
 
 /* TODO 
--print out prior guesses
--check prior winner and their scores
+-add highscore and name to scoreboard
 -use ?? Nullish coalescing operator for computing scores and returnPlayerCheck()
 */
 
@@ -28,7 +27,7 @@ let gameInfo = {
     currentResponse: 0,
     isNewPlayer: true,
     responsesArr: [],
-    scoreBoard: ['tim', 3, 'bob', 5], // ['thiem',3]
+    scoreBoard: ['tim', 3, 'bob', 5], // ['thiem',3] name, attempts
     attempts: 0
 }
 
@@ -43,12 +42,15 @@ function startGame(){
     isSolved = false;
     
     gameInfo.playerUserName = prompt('What is your name?');
-    let isVeteran = priorPlayerCheck(gameInfo.playerUserName)
+    let isVeteran = priorPlayerCheck(gameInfo.scoreBoard, gameInfo.playerUserName)
 
     //veteran gameloop, loads their old score
     if(isVeteran){
-        oldPlayerScore = loadPlayerStats(gameInfo.playerUserName)
-    } 
+        oldPlayerScore = loadPlayerStats(gameInfo.scoreBoard, gameInfo.playerUserName)
+        alert(`Welcome back ${gameInfo.playerUserName}!`) //to verify live that player is found
+    } else{
+        alert(`Welcome ${gameInfo.playerUserName}!`) //debugging only
+    }
 
     /* 
     - if first time playing the current time, give fresh game. 
@@ -70,7 +72,7 @@ function startGame(){
         gameInfo.attempts--;
 
         if(isSolved){
-            let againRes = prompt('Would you like to play again? (\'yes\' or \'no\' ')
+            let againRes = prompt('Would you like to play again? (\'yes\' or \'no\') ')
             if(againRes === 'y' || againRes === 'yes'){
                 numberOfCurrentPlays++
                 isSolved = false;
@@ -85,11 +87,11 @@ function startGame(){
         //still have lives, solved it
         alert('game has ended because you solved it')
     } else if(gameInfo.attempts === -1){
-        alert('Game ended. Not playing again')
+        alert('Game addiction ended, have you tried alcohol?')
     } else if(gameInfo.attempts === 0){
         //ran out of lives
         alert('you lost the game')
-    } else if(gameInfo.attempts === 0){
+    } else if(gameInfo.attempts < 0){
         alert(`You broke the code. This condition should be impossible to reach, \n 
         ALERT THE CODE MONKEY!!!!`)
     }
@@ -113,15 +115,38 @@ function playGame(){
 
 }
 
-function priorPlayerCheck(){
-    // run some check with array.includes, but for now return true
-    return true;
+function priorPlayerCheck(arr, name){
+    if(arr.includes(name)){
+        let score = loadPlayerStats(name) //load player score if exist. this is redundant for debugging
+        console.log(`${name} is in the list. Your past score was: ${score}`)
+        return true
+    } else{
+        console.log(`${name} is not in the list`)
+        return false
+    }
 }
 
-function loadPlayerStats(name){
+
+function loadPlayerStats(arr, name){
     //check for player return score
-    let priorScore = 5;
+    let scoreIndex = arr.indexOf(name)
+    let priorScore = arr[scoreIndex+1];
+
+
+    // priorScore = 5;
     return priorScore; 
+}
+
+// i am not checking for unique or highest score, because higher score will always call this function, and newScores adds to the beginning and includes searches for first match. Complexity not needed here yett.
+function recordNewScore(arr, name, newScore){
+    console.log('old scores array:', arr);
+
+    arr.unshift(newScore)
+    arr.unshift(name);
+
+
+    console.log('new scores array:', arr);
+    return arr;
 }
 
 
