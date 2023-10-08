@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <script>
+    let player = {
+        previousScore: 0
+    };
+    let previousScore = 0;
+       function main() {
+        let randomNumber = Math.floor(Math.random() * 100);
+        console.log(randomNumber)
+        player.score = 0;
+        let isCorrect = false;
+        let amountGuessed = [];
+
+        if (!player.name) {
+            player.name = prompt(`What is your name?`);
+        }
+
+
+        
+        while (!isCorrect) {
+            let guess = Number(prompt(`Guess a number between 1 - 100?`));
+            amountGuessed.push(guess);
+            console.log(amountGuessed)
+            
+            if (guess > randomNumber) {
+                alert(`Guess lower ${player.name}`);
+                player.score++;
+            } else if (guess < randomNumber) {
+                alert(`Guess higher ${player.name}`)
+                player.score++;
+            }
+
+            if (guess === randomNumber) {
+                player.score++
+                alert(`That is correct ${player.name}! It only took you ${amountGuessed.length} guesses. These were your previous guesses ${amountGuessed}`);
+                break; 
+            }
+        }    
+        
+        if (player.previousScore !== 0) {
+            let difference = player.previousScore - player.score;
+            if (difference > 0) {
+                alert(`Awesome ${player.name}! You beat your previous score by ${difference}`);
+            }
+        }
+        
+        
+        console.log(player.score);
+        console.log(amountGuessed.length);
+        playAgain();
+        function playAgain() {
+        let str = prompt(`Do you want to play again? (Yes/No)`)
+         if (str === 'Yes') {
+             main();
+         }
+        }
+    }
+    
+    
+    
+    
+    
+    main();
+    
+    
+       
+    </script>
+</body>
+</html>

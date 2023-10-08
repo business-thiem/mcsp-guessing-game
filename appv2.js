@@ -172,9 +172,6 @@ function validateUserResponse(gameObj){
     \n` 
     
     //if solved, check for it
-
-
-
     if(num === playerGuess){
         isSolved = true
         isNewRecord = highScoreCheck(gameObj) //sets all strings and highscores to record upon victory
@@ -288,7 +285,7 @@ function priorPlayerCheck(arr, playerName){
 
 function loadPlayerStats(arr, playerName){
     //check for player return score
-    let scoreIndex = arr.indexOf(playerName)
+    let scoreIndex = arr.indexOf(playerName) 
     let priorScore = arr[scoreIndex+1];
 
 
