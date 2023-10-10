@@ -34,7 +34,7 @@ function startGame(){
     }
 
     //show message player won
-    console.log(`Your guess ${guess} is right!`)
+    alert(`Your guess ${guess} is correct!`))
     //record the score
     //ask to play again
 
