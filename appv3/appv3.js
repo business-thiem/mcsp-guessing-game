@@ -13,6 +13,7 @@ const scoreBoard = {
 const gameConfig = {
   min: 1,
   max: 100,
+  attempts: 5,
 };
 
 function startGame() {
@@ -24,15 +25,21 @@ function startGame() {
 
   //exits on true
   while (Number(guess) !== numberToGuess) {
-    giveHint(playerName, guess, numberToGuess);
+    giveHint(guess, numberToGuess);
+    gameConfig.attempts--; //attempts player has, breaks infinite loop
+    alert(`${gameConfig.attempts} tries left`);
     guess = askForNumber();
     console.log(scoreBoard);
     scoreBoard[playerName].current.push(guess);
-  }
 
-  //show message player won
-  displayResultMessage(playerName);
-  //record the score and reset
+    //TODO last left off here, and the join issue in displayResultMessage()
+    if (gameConfig.attempts <= 0) {
+      alert(`Out of lives. You lose`);
+      break;
+    } else {
+      displayResultMessage(playerName);
+    }
+  }
   resetscoreBoard(playerName);
   //ask to play again
   playAgain();
@@ -45,9 +52,12 @@ function askForNumber() {
   return num;
 }
 
-function giveHint(name, guess, numberToGuess) {
+function giveHint(guess, numberToGuess) {
   const hint = Number(guess) < numberToGuess ? `Higher` : `Lower`;
-  alert(`Your guess: ${guess}. Guess ${hint}`);
+  //   alert(`Your guess: ${guess}. Guess ${hint}.`);
+  alert(
+    `DEBUG MODE: Your guess: ${guess}. Guess ${hint}. Number is: ${numberToGuess}`
+  );
 }
 
 function displayResultMessage(playerName) {
