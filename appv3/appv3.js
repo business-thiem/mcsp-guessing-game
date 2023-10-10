@@ -31,8 +31,9 @@ function startGame() {
   }
 
   //show message player won
-  alert(`Your guess ${guess} is correct!`);
+  displayResultMessage(playerName);
   //record the score
+
   //ask to play again
 }
 
@@ -54,9 +55,31 @@ function displayResultMessage(playerName) {
     alert(
       'comparing with previous game, display some message, if player has played before.'
     );
+
+    compareWithPreviousGame(playerName);
   } else {
     alert(
       `Great Job ${playerName}! This is your first win of many. Your score: ${scoreBoard[playerName].current.length} your guesses: ${scoreBoard[playerName].current.join} `
+    );
+  }
+}
+
+function compareWithPreviousGame(playerName) {
+  const priorScore = scoreBoard[playerName].past.length; //2
+  const currentScore = scoreBoard[playerName].current.length; //5
+  const scoreDifference = currentScore - priorScore; // 5-2 did not do better
+
+  // 3 diff did not do better
+  if (scoreDifference < 0) {
+    alert(
+      `That's Correct ${guest}! You missed your highscore by ${Math.abs(
+        difference
+      )} guesses.`
+    );
+    //if diff did better
+  } else if (difference > 0) {
+    alert(
+      `That's Correct ${guest}! You did better in your last game by ${difference} guesses.`
     );
   }
 }
@@ -70,10 +93,6 @@ function getNumberToGuess(min, max) {
   return Math.floor(Math.random() * (max - min) + min + 1); // +1 gets inclusive 1-100 range
 }
 
-function showScoreBoard() {
-  //show scoreboard
-}
-
 function initializeUser(userName) {
   if (!scoreBoard[userName]) {
     scoreBoard[userName] = {
@@ -81,6 +100,11 @@ function initializeUser(userName) {
       past: [],
     };
   }
+}
+
+function showScoreBoard() {
+  //show scoreboard
+  alert(`Not available yet. refactoring in progress`);
 }
 
 //currently not used *************************
