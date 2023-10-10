@@ -19,19 +19,26 @@ const gameConfig = {
 
 
 function startGame(){
-    const numberToGuess = getNumberToGuess()
+    const numberToGuess = getNumberToGuess(gameConfig.min, gameConfig.max)
     const playerName = prompt(`Please enter your name`);
     let guess = askForNumber();
 
     initializeUser(playerName);
 
+    //exits on true
     while(Number(guess) !== numberToGuess){
-        giveHintAndAskAgain(playerName, guess, numberToGuess)
-        askForNumber();
+        giveHint(playerName, guess, numberToGuess)
+        guess = askForNumber();
+        console.log(scoreBoard)
         scoreBoard[playerName].current.push(guess);
     }
 
+    //show message player won
     console.log(`Your guess ${guess} is right!`)
+    //record the score
+    //ask to play again
+
+
 }
 
 function askForNumber(){
@@ -39,17 +46,22 @@ function askForNumber(){
     return num;
 }
 
-function giveHintAndAskAgain(name, guess, numberToGuess){
+function giveHint(name, guess, numberToGuess){
     const hint = Number(guess) < numberToGuess ? `Higher` : `Lower`;
     alert(`Your guess: ${guess}. Guess ${hint}`)
 }
 
-function validateUserInput(){
-    //regex or some form of validation on string prompts
-    if(!str){
-        alert('invalid input')
+function displayResultMessage(playerName){
+    if(scoreBoard[playerName].past.length > 0){
+        // compareWithPreviousGame(playerName)
+        alert('comparing with previous game, display some message, if player has played before.')
+    } else {
+        alert(`Great Job ${playerName}! This is your first win of many. Your score: ${scoreBoard[playerName].current.length} your guesses: ${scoreBoard[playerName].current.join} `)
     }
 }
+
+
+
 
 function resetscoreBoard(guest) {
     scoreBoard[guest].past = [...scoreBoard[guest].current]; //spread operator, current scoreBoard set are now past scoreBoard
@@ -76,5 +88,17 @@ function initializeUser(userName) {
             current: [],
             past: []
         };
+    }
+}
+
+
+
+
+
+//currently not used *************************
+function validateUserInput(){
+    //regex or some form of validation on string prompts
+    if(!str){
+        alert('invalid input')
     }
 }
